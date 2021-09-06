@@ -1,3 +1,4 @@
+using BusinessCore6;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -5,10 +6,13 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new() { Title = "ApiCore6", Version = "v1" });
 });
+
+builder.Services.AddScoped<ISectionService, SectionService>();
 
 var app = builder.Build();
 
@@ -23,6 +27,10 @@ if (builder.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+app.MapGet("section/{id}", async (ISectionService sectionService, int id) => await sectionService.ReadAsync(id));
+
+
 
 app.MapControllers();
 
